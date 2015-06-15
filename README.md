@@ -57,3 +57,4 @@ MIT
 
 [node-matrix-importer]: https://github.com/joshgillies/node-matrix-importer
 [Bulk File Import Tool]: http://manuals.matrix.squizsuite.net/tools/chapters/bulk-file-import-tool
+[Import Assets from XML Tool]: http://manuals.matrix.squizsuite.net/tools/chapters/import-assets-from-xml-tool
