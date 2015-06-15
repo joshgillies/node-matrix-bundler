@@ -58,7 +58,10 @@ Bundler.prototype.add = function addFile (file, opts) {
   var source = opts.file
   var destination = opts.file = (function destinationPath (opts) {
     return opts.ext.replace('.', '') + '/' + opts.base
-  })(path.parse(source))
+  })(path.parse ? path.parse(source) : {
+    ext: path.extname(source),
+    base: path.basename(source)
+  })
 
   var entry = this.writer.createAsset(opts)
   this.writer.addPath({
