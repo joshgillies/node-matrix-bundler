@@ -6,23 +6,29 @@ var path = require('path')
 var test = require('tape')
 var fs = require('fs')
 
-var testFile = path.join(__dirname, '/fixtures/test.txt')
-var testName = 'txt/test.txt'
-var testContent = fs.readFileSync(testFile, 'utf-8')
+var fixtures = {
+  'txt/test.txt': {
+    source: path.join(__dirname, '/fixtures/test.txt'),
+    content: fs.readFileSync(path.join(__dirname, '/fixtures/test.txt'))
+  },
+  'export.xml': {
+    source: path.join(__dirname, '/fixtures/export.xml'),
+    content: fs.readFileSync(path.join(__dirname, '/fixtures/export.xml'))
+  }
+}
 
 test('create bundle', function (assert) {
   var bundle = Bundler()
 
-  bundle.add(testFile)
+  bundle.add(fixtures['txt/test.txt'].source)
 
   extract.on('entry', function (header, stream, next) {
-    if (header.name !== testName) return next()
-
-    assert.equal(header.name, testName)
-    stream.pipe(concat({ encoding: 'string' }, function (text) {
-      assert.equal(text, testContent)
-      next()
-    }))
+    if (header.name in fixtures) {
+      stream.pipe(concat(function (text) {
+        assert.deepEqual(text, fixtures[header.name].content)
+        next()
+      }))
+    } else return next()
   })
 
   extract.on('finish', function () {
