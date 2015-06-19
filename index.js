@@ -1,4 +1,5 @@
 var EventEmitter = require('events').EventEmitter
+var fileAsset = require('node-matrix-file-types')
 var Importer = require('node-matrix-importer')
 var inherits = require('inherits')
 var gzip = require('zlib').createGzip()
@@ -48,7 +49,7 @@ Bundler.prototype.add = function addFile (file, opts) {
   }
 
   if (!opts.type) {
-    opts.type = 'file'
+    opts.type = fileAsset(file)
   }
 
   if (!opts.link) {
@@ -56,17 +57,13 @@ Bundler.prototype.add = function addFile (file, opts) {
   }
 
   var source = opts.file
-  var destination = opts.file = (function destinationPath (opts) {
-    return opts.ext.replace('.', '') + '/' + opts.base
-  })(path.parse ? path.parse(source) : {
-    ext: path.extname(source),
-    base: path.basename(source)
-  })
-
+  var base = path.basename(source)
+  var destination = opts.file = opts.type + '/' + base
   var entry = this.writer.createAsset(opts)
+
   this.writer.addPath({
     assetId: entry.id,
-    path: destination
+    path: base
   })
 
   if (this.globalUnrestricted) {

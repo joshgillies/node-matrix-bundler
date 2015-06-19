@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <actions>
   <action>
-    <action_id>create_File_1</action_id>
+    <action_id>create_Text_File_1</action_id>
     <action_type>create_file_asset</action_type>
-    <file_path>txt/test.txt</file_path>
-    <type_code>file</type_code>
+    <file_path>text_file/test.txt</file_path>
+    <type_code>text_file</type_code>
     <parentid>1</parentid>
     <value/>
     <link_type>1</link_type>
@@ -12,9 +12,9 @@
     <is_exclusive>0</is_exclusive>
   </action>
   <action>
-    <action_id>add_File_1_path</action_id>
+    <action_id>add_Text_File_1_path</action_id>
     <action_type>add_web_path</action_type>
-    <asset>[[output://create_File_1.assetid]]</asset>
-    <path>txt/test.txt</path>
+    <asset>[[output://create_Text_File_1.assetid]]</asset>
+    <path>test.txt</path>
   </action>
 </actions>

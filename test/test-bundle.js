@@ -7,7 +7,7 @@ var test = require('tape')
 var fs = require('fs')
 
 var fixtures = {
-  'txt/test.txt': {
+  'text_file/test.txt': {
     source: path.join(__dirname, '/fixtures/test.txt'),
     content: fs.readFileSync(path.join(__dirname, '/fixtures/test.txt'))
   },
@@ -20,7 +20,7 @@ var fixtures = {
 test('create bundle', function (assert) {
   var bundle = Bundler()
 
-  bundle.add(fixtures['txt/test.txt'].source)
+  bundle.add(fixtures['text_file/test.txt'].source)
 
   extract.on('entry', function (header, stream, next) {
     if (header.name in fixtures) {
