@@ -28,7 +28,7 @@ test('create bundle', function (assert) {
         assert.deepEqual(text, fixtures[header.name].content)
         next()
       }))
-    } else return next()
+    } else next()
   })
 
   extract.on('finish', function () {
@@ -38,4 +38,16 @@ test('create bundle', function (assert) {
   bundle.createBundle()
     .pipe(gunzip())
     .pipe(extract)
+})
+
+test('configure bundle', function (assert) {
+  var defaults = Bundler()
+  var linkType = Bundler({ globalLinkType: 2 })
+  var unrestricted = Bundler({ globalUnrestricted: true })
+
+  assert.equal(defaults.globalLinkType, 1)
+  assert.equal(defaults.globalUnrestricted, false)
+  assert.equal(linkType.globalLinkType, 2)
+  assert.equal(unrestricted.globalUnrestricted, true)
+  assert.end()
 })
