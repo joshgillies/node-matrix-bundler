@@ -2,6 +2,7 @@ var EventEmitter = require('events').EventEmitter
 var fileAsset = require('node-matrix-file-types')
 var Importer = require('node-matrix-importer')
 var inherits = require('inherits')
+var Buffer = Buffer || require('buffer').Buffer
 var gzip = require('zlib').createGzip()
 var path = require('path')
 var tar = require('tar-stream')
@@ -34,7 +35,12 @@ function Bundler (opts) {
 
 inherits(Bundler, EventEmitter)
 
-Bundler.prototype.add = function addFile (file, opts) {
+Bundler.prototype.add = function addFile (file, buffer, opts) {
+  if (!Buffer.isBuffer(buffer) && typeof buffer === 'object') {
+    opts = buffer
+    buffer = undefined
+  }
+
   if (typeof file === 'object') {
     opts = file
     file = undefined
@@ -81,14 +87,18 @@ Bundler.prototype.add = function addFile (file, opts) {
     }
 
     this.packer.entry({ name: destination }, buf)
-    this.packer.finalize()
   }
 
-  fs.readFile(source, addEntry.bind(this))
+  if (Buffer.isBuffer(buffer)) {
+    addEntry.call(this, null, buffer)
+  } else {
+    fs.readFile(source, addEntry.bind(this))
+  }
 }
 
 Bundler.prototype.createBundle = function createBundle (cb) {
   this.packer.entry({ name: 'export.xml' }, this.writer.toString())
+  this.packer.finalize()
 
   if (!cb) {
     return this.packer.pipe(gzip)

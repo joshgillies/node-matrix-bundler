@@ -26,8 +26,10 @@
   },
   "homepage": "https://github.com/joshgillies/node-matrix-bundler",
   "devDependencies": {
+    "baboon-image": "^1.0.0",
     "concat-stream": "^1.4.10",
     "gunzip-maybe": "^1.2.0",
+    "resolve": "^1.1.6",
     "standard": "^4.0.1",
     "tape": "^4.0.0"
   },
