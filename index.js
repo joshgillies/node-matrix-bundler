@@ -35,10 +35,10 @@ function Bundler (opts) {
 
 inherits(Bundler, EventEmitter)
 
-Bundler.prototype.add = function addFile (file, buffer, opts) {
-  if (!Buffer.isBuffer(buffer) && typeof buffer === 'object') {
-    opts = buffer
-    buffer = undefined
+Bundler.prototype.add = function addFile (file, content, opts) {
+  if (!Buffer.isBuffer(content) && typeof content === 'object') {
+    opts = content
+    content = undefined
   }
 
   if (typeof file === 'object') {
@@ -80,17 +80,17 @@ Bundler.prototype.add = function addFile (file, buffer, opts) {
     })
   }
 
-  function addEntry (err, buf) {
+  function addEntry (err, data) {
     if (err) {
       this.emit('error', err)
       return
     }
 
-    this.packer.entry({ name: destination }, buf)
+    this.packer.entry({ name: destination }, data)
   }
 
-  if (Buffer.isBuffer(buffer)) {
-    addEntry.call(this, null, buffer)
+  if (Buffer.isBuffer(content) || typeof content === 'string') {
+    addEntry.call(this, null, content)
   } else {
     fs.readFile(source, addEntry.bind(this))
   }

@@ -34,11 +34,11 @@ The `opts` argument accepts an object with the following properties:
   * `opts.globalLinkType`: String defaults 'TYPE_1'
   * `opts.globalUnrestricted`: Bool defaults false
 
-### bundle.add(file, buffer, opts)
+### bundle.add(file, content, opts)
 
 The `file` argument accpets a String representing the path of a file you wish to add to the bundle.
 
-The `buffer` argument accepts an optional Buffer containing the contetns of the file
+The `content` argument accepts an optional Buffer or String containing the contetns of the file
 you wish to add to the bundle. If undefined, `Bundler` will use the relative path
 supplied as the `file` argument to source the file contents.
 

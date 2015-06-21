@@ -11,6 +11,10 @@ var fixtures = {
     source: path.join(__dirname, '/fixtures/test.txt'),
     content: fs.readFileSync(path.join(__dirname, '/fixtures/test.txt'))
   },
+  'css_file/style.css': {
+    source: 'style.css',
+    content: 'body { background: #000 }'
+  },
   'image/baboon.png': {
     source: 'baboon.png',
     content: fs.readFileSync(require('resolve').sync('baboon-image/baboon.png'))
@@ -28,10 +32,13 @@ test('create bundle', function (assert) {
 
   bundle.add(fixtures['image/baboon.png'].source, fixtures['image/baboon.png'].content)
 
+  bundle.add(fixtures['css_file/style.css'].source, fixtures['css_file/style.css'].content)
+
   extract.on('entry', function (header, stream, next) {
     if (header.name in fixtures) {
       stream.pipe(concat(function (buf) {
-        assert.deepEqual(buf, fixtures[header.name].content)
+        if (header.name === 'css_file/style.css') assert.deepEqual(buf.toString(), fixtures[header.name].content)
+        else assert.deepEqual(buf, fixtures[header.name].content)
         next()
       }))
     } else next()
