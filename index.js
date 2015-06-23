@@ -30,6 +30,7 @@ function Bundler (opts) {
   this.writer = opts.writer
   this.packer = tar.pack()
   this.globalLinkType = opts.globalLinkType
+  this.globalRootNode = opts.globalRootNode
   this.globalUnrestricted = !!opts.globalUnrestricted
 }
 

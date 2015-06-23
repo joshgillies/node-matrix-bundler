@@ -60,10 +60,12 @@ test('configure bundle', function (assert) {
   var defaults = Bundler()
   var linkType = Bundler({ globalLinkType: 2 })
   var unrestricted = Bundler({ globalUnrestricted: true })
+  var rootNode = Bundler({ globalRootNode: '100'})
 
   assert.equal(defaults.globalLinkType, 1)
   assert.equal(defaults.globalUnrestricted, false)
   assert.equal(linkType.globalLinkType, 2)
   assert.equal(unrestricted.globalUnrestricted, true)
+  assert.equal(rootNode.globalRootNode, '100')
   assert.end()
 })

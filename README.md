@@ -32,6 +32,7 @@ The `opts` argument accepts an object with the following properties:
 
   * `opts.writer`: `writer` is a mechanism for producing Squiz Matrix compatible input. Defaults to [node-matrix-importer].
   * `opts.globalLinkType`: String defaults 'TYPE_1'
+  * `opts.globalRootNode`: String or Number representing the default root node. Defaults to '1'
   * `opts.globalUnrestricted`: Bool defaults false
 
 ### bundle.add(file, content, opts)
