@@ -55,6 +55,10 @@ Bundler.prototype.add = function addFile (file, content, opts) {
     opts.file = file
   }
 
+  if (this.globalRootNode && !opts.parentId) {
+    opts.parentId = this.globalRootNode
+  }
+
   if (!opts.type) {
     opts.type = fileAsset(file)
   }

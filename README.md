@@ -54,6 +54,8 @@ The `opts` argument accepts an object with the following properties:
   * `opts.dependant`
   * `opts.exclusive`
 
+These `opts` are used to define attributes of the resulting File Asset within Squiz Matrix.
+
 ### bundle.createBundle()
 
 ## License
