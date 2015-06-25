@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Generate file bundles for import into Squiz Matrix systems",
   "main": "index.js",
+  "bin": {
+    "matrix-bundler": "cli.js"
+  },
   "scripts": {
     "test": "standard && tape test/*.js"
   },
@@ -35,6 +38,7 @@
   },
   "dependencies": {
     "inherits": "^2.0.1",
+    "minimist": "^1.1.1",
     "node-matrix-file-types": "^1.0.1",
     "node-matrix-importer": "^1.1.0",
     "tar-stream": "^1.1.5"
