@@ -1,8 +1,17 @@
+var Bundler = require('../')
 var argv = require('minimist')(process.argv.slice(2))
+var fs = require('fs')
+
+var bundle = Bundler()
+var entry = argv.entry || argv.e || '.'
+var output = argv.output || argv.o || './export.tgz'
 
 if (!argv.length || argv.h || argv.help) {
   console.log(help())
 }
+
+bundle.createBundle()
+  .pipe(fs.createWriteStream(output))
 
 function help () {
   return [
