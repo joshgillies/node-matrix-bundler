@@ -58,6 +58,10 @@ These `opts` are used to define attributes of the resulting File Asset within Sq
 
 ### bundle.createBundle()
 
+Bundle the files and the Import XML Manifest into a singe file.
+
+Returns a readable stream with the gzipped contents of your bundle.
+
 ## License
 
 MIT
