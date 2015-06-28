@@ -1,22 +1,9 @@
-var Bundler = require('../')
 var argv = require('minimist')(process.argv.slice(2))
-var fs = require('fs')
-
-var bundle = Bundler()
-var entry = argv.entry || argv.e || '.'
-var output = argv.output || argv.o || './export.tgz'
-
-if (!argv.length || argv.h || argv.help) {
-  console.log(help())
-}
-
-bundle.createBundle()
-  .pipe(fs.createWriteStream(output))
 
 function help () {
   return [
     'Usage:',
-    '  matrix-bundler [entry] [opts]',
+    '  matrix-bundler [entry] [output] [opts]',
     '',
     'Options:',
     '  --help, -h           show help message',
@@ -29,4 +16,41 @@ function help () {
     'Examples:',
     '  matrix-bundler --entry ./files --link 2 --unrestricted --output ./files.tgz'
   ].join('\n')
+}
+
+function cli (opts) {
+  var readdirp = require('readdirp')
+  var Bundler = require('./')
+  var fs = require('fs')
+
+  var bundle = Bundler({
+    globalLinkType: opts.linkType,
+    globalRootNode: opts.rootNode,
+    globalUnrestricted: opts.unrestricted
+  })
+  var files = readdirp({
+    root: opts.entry,
+    fileFilter: ['!.*'] // ignore hidden files
+  })
+
+  files
+    .on('data', function processFile (file) {
+      bundle.add(file.fullPath)
+    })
+    .on('end', function createBundle () {
+      bundle.createBundle()
+        .pipe(fs.createWriteStream(opts.output || './export.tgz'))
+    })
+}
+
+if (!!argv._.length || argv.h || argv.help) {
+  console.log(help())
+} else {
+  cli({
+    entry: argv._[0] || argv.entry || argv.e,
+    output: argv._[1] || argv.output || argv.o,
+    rootNode: argv.parent || argv.p,
+    linkType: argv.link || argv.l,
+    unrestricted: argv.unrestricted || argv.u
+  })
 }
