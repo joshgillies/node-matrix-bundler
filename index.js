@@ -1,6 +1,7 @@
 var EventEmitter = require('events').EventEmitter
 var fileAsset = require('node-matrix-file-types')
 var Importer = require('node-matrix-importer')
+var PassThrough = require('readable-stream').PassThrough
 var inherits = require('inherits')
 var Buffer = Buffer || require('buffer').Buffer
 var gzip = require('zlib').createGzip()
@@ -29,12 +30,19 @@ function Bundler (opts) {
 
   this.writer = opts.writer
   this.packer = tar.pack()
+  this.stream = new PassThrough()
+  this.files = 0
+  this.written = 0
   this.globalLinkType = opts.globalLinkType
   this.globalRootNode = opts.globalRootNode
   this.globalUnrestricted = !!opts.globalUnrestricted
 }
 
 inherits(Bundler, EventEmitter)
+
+Bundler.prototype.isFinished = function finished () {
+  return this.files === this.written
+}
 
 Bundler.prototype.add = function addFile (file, content, opts) {
   if (!Buffer.isBuffer(content) && typeof content === 'object') {
@@ -72,6 +80,8 @@ Bundler.prototype.add = function addFile (file, content, opts) {
   var destination = opts.file = opts.type + '/' + base
   var entry = this.writer.createAsset(opts)
 
+  this.files++
+
   this.writer.addPath({
     assetId: entry.id,
     path: base
@@ -91,6 +101,8 @@ Bundler.prototype.add = function addFile (file, content, opts) {
       return
     }
 
+    this.written++
+
     this.packer.entry({ name: destination }, data)
   }
 
@@ -102,11 +114,26 @@ Bundler.prototype.add = function addFile (file, content, opts) {
 }
 
 Bundler.prototype.createBundle = function createBundle (cb) {
-  this.packer.entry({ name: 'export.xml' }, this.writer.toString())
-  this.packer.finalize()
+  if (!this.isFinished()) {
+    setTimeout(function () {
+      this.createBundle(cb)
+    }.bind(this), 100)
 
-  if (!cb) {
-    return this.packer.pipe(gzip)
+    if (!cb) {
+      this.isStreaming = true
+      return this.stream
+    }
+  } else {
+    this.packer.entry({ name: 'export.xml' }, this.writer.toString())
+    this.packer.finalize()
+
+    if (!cb) {
+      if (this.isStreaming) {
+        this.packer.pipe(gzip).pipe(this.stream)
+      } else {
+        return this.packer.pipe(gzip)
+      }
+    }
   }
 }
 

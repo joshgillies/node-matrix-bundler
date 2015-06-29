@@ -49,11 +49,9 @@ test('create bundle', function (assert) {
   })
 
   // async smell. Should look into this!
-  setTimeout(function () {
-    bundle.createBundle()
-      .pipe(gunzip())
-      .pipe(extract)
-  }, 500)
+  bundle.createBundle()
+    .pipe(gunzip())
+    .pipe(extract)
 })
 
 test('configure bundle', function (assert) {
