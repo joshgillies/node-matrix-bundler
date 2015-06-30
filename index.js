@@ -31,18 +31,13 @@ function Bundler (opts) {
   this.writer = opts.writer
   this.packer = tar.pack()
   this.stream = new PassThrough()
-  this.files = 0
-  this.written = 0
+  this.pending = 0
   this.globalLinkType = opts.globalLinkType
   this.globalRootNode = opts.globalRootNode
   this.globalUnrestricted = !!opts.globalUnrestricted
 }
 
 inherits(Bundler, EventEmitter)
-
-Bundler.prototype.isFinished = function finished () {
-  return this.files === this.written
-}
 
 Bundler.prototype.add = function addFile (file, content, opts) {
   if (!Buffer.isBuffer(content) && typeof content === 'object') {
@@ -80,7 +75,7 @@ Bundler.prototype.add = function addFile (file, content, opts) {
   var destination = opts.file = opts.type + '/' + base
   var entry = this.writer.createAsset(opts)
 
-  this.files++
+  this.pending++
 
   this.writer.addPath({
     assetId: entry.id,
@@ -101,7 +96,7 @@ Bundler.prototype.add = function addFile (file, content, opts) {
       return
     }
 
-    this.written++
+    --this.pending
 
     this.packer.entry({ name: destination }, data)
   }
@@ -114,7 +109,7 @@ Bundler.prototype.add = function addFile (file, content, opts) {
 }
 
 Bundler.prototype.createBundle = function createBundle (cb) {
-  if (!this.isFinished()) {
+  if (this.pending) {
     setTimeout(function () {
       this.createBundle(cb)
     }.bind(this), 100)
