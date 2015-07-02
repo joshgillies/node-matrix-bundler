@@ -31,15 +31,15 @@ bundle.createBundle()
 The `opts` argument accepts an object with the following properties:
 
   * `opts.writer`: `writer` is a mechanism for producing Squiz Matrix compatible input. Defaults to [node-matrix-importer].
-  * `opts.globalLinkType`: String defaults 'TYPE_1'
+  * `opts.globalLinkType`: String defaults to 'TYPE_1'
   * `opts.globalRootNode`: String or Number representing the default root node. Defaults to '1'
-  * `opts.globalUnrestricted`: Bool defaults false
+  * `opts.globalUnrestricted`: Boolean defaults to false
 
 ### bundle.add(file, content, opts)
 
 The `file` argument accpets a String representing the path of a file you wish to add to the bundle.
 
-The `content` argument accepts an optional Buffer or String containing the contetns of the file
+The `content` argument accepts an optional Buffer or String containing the contents of the file
 you wish to add to the bundle. If undefined, `Bundler` will use the relative path
 supplied as the `file` argument to source the file contents.
 
