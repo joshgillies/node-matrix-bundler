@@ -31,6 +31,7 @@ function Bundler (opts) {
   this.writer = opts.writer
   this.packer = tar.pack()
   this.stream = new PassThrough()
+  this.isStreaming = false
   this.pending = 0
   this.globalLinkType = opts.globalLinkType
   this.globalRootNode = opts.globalRootNode
@@ -108,13 +109,15 @@ Bundler.prototype.add = function addFile (file, content, opts) {
   }
 }
 
-Bundler.prototype.createBundle = function createBundle (cb) {
+Bundler.prototype.createBundle = function createBundle () {
   if (this.pending) {
     setTimeout(function () {
-      this.createBundle(cb)
+      this.createBundle()
     }.bind(this), 100)
 
-    if (!cb) {
+    if (this.isStreaming) {
+      return
+    } else {
       this.isStreaming = true
       return this.stream
     }
@@ -122,12 +125,10 @@ Bundler.prototype.createBundle = function createBundle (cb) {
     this.packer.entry({ name: 'export.xml' }, this.writer.toString())
     this.packer.finalize()
 
-    if (!cb) {
-      if (this.isStreaming) {
-        this.packer.pipe(gzip).pipe(this.stream)
-      } else {
-        return this.packer.pipe(gzip)
-      }
+    if (this.isStreaming) {
+      this.packer.pipe(gzip).pipe(this.stream)
+    } else {
+      return this.packer.pipe(gzip)
     }
   }
 }

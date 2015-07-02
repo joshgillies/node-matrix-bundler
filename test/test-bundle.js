@@ -48,7 +48,6 @@ test('create bundle', function (assert) {
     assert.end()
   })
 
-  // async smell. Should look into this!
   bundle.createBundle()
     .pipe(gunzip())
     .pipe(extract)
