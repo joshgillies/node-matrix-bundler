@@ -41,6 +41,9 @@ function Bundler (opts) {
 inherits(Bundler, EventEmitter)
 
 Bundler.prototype.add = function addFile (file, content, opts) {
+
+  this.pending++
+
   if (!Buffer.isBuffer(content) && typeof content === 'object') {
     opts = content
     content = undefined
@@ -75,8 +78,6 @@ Bundler.prototype.add = function addFile (file, content, opts) {
   var base = path.basename(source)
   var destination = opts.file = opts.type + '/' + base
   var entry = this.writer.createAsset(opts)
-
-  this.pending++
 
   this.writer.addPath({
     assetId: entry.id,
