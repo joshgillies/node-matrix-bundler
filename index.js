@@ -112,9 +112,9 @@ Bundler.prototype.add = function addFile (file, content, opts) {
 
 Bundler.prototype.createBundle = function createBundle () {
   if (this.pending) {
-    setTimeout(function () {
+    setImmediate(function deferBundle () {
       this.createBundle()
-    }.bind(this), 100)
+    }.bind(this))
 
     if (this.isStreaming) {
       return
