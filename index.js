@@ -28,11 +28,36 @@ function Bundler (opts) {
 
   EventEmitter.call(this)
 
-  this.writer = opts.writer
-  this.packer = tar.pack()
-  this.stream = new PassThrough()
-  this.isStreaming = false
-  this.pending = 0
+  var packer = tar.pack()
+  var writer = opts.writer
+
+  this._createAsset = function createAsset () {
+    return writer.createAsset.apply(writer, arguments)
+  }
+  this._setAttribute = function setAttribute () {
+    return writer.setAttribute.apply(writer, arguments)
+  }
+  this._addPath = function addPath () {
+    return writer.addPath.apply(writer, arguments)
+  }
+  this._toString = function () {
+    return writer.toString.apply(writer, arguments)
+  }
+
+  this._entry = function () {
+    return packer.entry.apply(packer, arguments)
+  }
+  this._finalize = function () {
+    return packer.finalize.apply(packer, arguments)
+  }
+  this._tarStream = function tarStream () {
+    return packer
+  }
+
+  this._stream = new PassThrough()
+
+  this._isStreaming = false
+  this._pending = 0
   this.globalLinkType = opts.globalLinkType
   this.globalRootNode = opts.globalRootNode
   this.globalUnrestricted = !!opts.globalUnrestricted
@@ -42,7 +67,7 @@ inherits(Bundler, EventEmitter)
 
 Bundler.prototype.add = function addFile (file, content, opts) {
 
-  this.pending++
+  this._pending++
 
   if (!Buffer.isBuffer(content) && typeof content === 'object') {
     opts = content
@@ -77,15 +102,15 @@ Bundler.prototype.add = function addFile (file, content, opts) {
   var source = opts.file
   var base = path.basename(source)
   var destination = opts.file = opts.type + '/' + base
-  var entry = this.writer.createAsset(opts)
+  var entry = this._createAsset(opts)
 
-  this.writer.addPath({
+  this._addPath({
     assetId: entry.id,
     path: base
   })
 
   if (this.globalUnrestricted) {
-    this.writer.setAttribute({
+    this._setAttribute({
       assetId: entry.id,
       attribute: 'allow_unrestricted',
       value: this.globalUnrestricted
@@ -98,9 +123,9 @@ Bundler.prototype.add = function addFile (file, content, opts) {
       return
     }
 
-    --this.pending
+    --this._pending
 
-    this.packer.entry({ name: destination }, data)
+    this._entry({ name: destination }, data)
   }
 
   if (Buffer.isBuffer(content) || typeof content === 'string') {
@@ -111,25 +136,25 @@ Bundler.prototype.add = function addFile (file, content, opts) {
 }
 
 Bundler.prototype.createBundle = function createBundle () {
-  if (this.pending) {
+  if (this._pending) {
     setImmediate(function deferBundle () {
       this.createBundle()
     }.bind(this))
 
-    if (this.isStreaming) {
+    if (this._isStreaming) {
       return
     } else {
-      this.isStreaming = true
-      return this.stream
+      this._isStreaming = true
+      return this._stream
     }
   } else {
-    this.packer.entry({ name: 'export.xml' }, this.writer.toString())
-    this.packer.finalize()
+    this._entry({ name: 'export.xml' }, this._toString())
+    this._finalize()
 
-    if (this.isStreaming) {
-      this.packer.pipe(gzip).pipe(this.stream)
+    if (this._isStreaming) {
+      this._tarStream().pipe(gzip).pipe(this._stream)
     } else {
-      return this.packer.pipe(gzip)
+      return this._tarStream().pipe(gzip)
     }
   }
 }
