@@ -1,4 +1,3 @@
-var EventEmitter = require('events').EventEmitter
 var fileAsset = require('node-matrix-file-types')
 var Importer = require('node-matrix-importer')
 var PassThrough = require('readable-stream').PassThrough
@@ -26,7 +25,7 @@ function Bundler (opts) {
     opts.globalLinkType = 1
   }
 
-  EventEmitter.call(this)
+  PassThrough.call(this)
 
   var packer = tar.pack()
   var writer = opts.writer
@@ -40,30 +39,29 @@ function Bundler (opts) {
   this._addPath = function addPath () {
     return writer.addPath.apply(writer, arguments)
   }
-  this._toString = function () {
+  this._toString = function toString () {
     return writer.toString.apply(writer, arguments)
   }
 
-  this._entry = function () {
+  this._entry = function entry () {
     return packer.entry.apply(packer, arguments)
   }
-  this._finalize = function () {
+  this._finalize = function finalize () {
     return packer.finalize.apply(packer, arguments)
   }
   this._tarStream = function tarStream () {
     return packer
   }
 
-  this._stream = new PassThrough()
-
   this._isStreaming = false
   this._pending = 0
+
   this.globalLinkType = opts.globalLinkType
   this.globalRootNode = opts.globalRootNode
   this.globalUnrestricted = !!opts.globalUnrestricted
 }
 
-inherits(Bundler, EventEmitter)
+inherits(Bundler, PassThrough)
 
 Bundler.prototype.add = function addFile (file, content, opts) {
 
@@ -145,14 +143,14 @@ Bundler.prototype.createBundle = function createBundle () {
       return
     } else {
       this._isStreaming = true
-      return this._stream
+      return this
     }
   } else {
     this._entry({ name: 'export.xml' }, this._toString())
     this._finalize()
 
     if (this._isStreaming) {
-      this._tarStream().pipe(gzip).pipe(this._stream)
+      this._tarStream().pipe(gzip).pipe(this)
     } else {
       return this._tarStream().pipe(gzip)
     }
