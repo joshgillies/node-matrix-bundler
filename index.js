@@ -64,7 +64,6 @@ function Bundler (opts) {
 inherits(Bundler, PassThrough)
 
 Bundler.prototype.add = function addFile (file, content, opts) {
-
   this._pending++
 
   if (!Buffer.isBuffer(content) && typeof content === 'object') {
