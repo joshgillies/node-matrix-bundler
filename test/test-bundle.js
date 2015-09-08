@@ -7,15 +7,15 @@ var test = require('tape')
 var fs = require('fs')
 
 var fixtures = {
-  'text_file/test.txt': {
+  'export/text_file/test.txt': {
     source: path.join(__dirname, '/fixtures/test.txt'),
     content: fs.readFileSync(path.join(__dirname, '/fixtures/test.txt'))
   },
-  'css_file/style.css': {
+  'export/css_file/style.css': {
     source: 'style.css',
     content: 'body { background: #000 }'
   },
-  'image/baboon.png': {
+  'export/image/baboon.png': {
     source: 'baboon.png',
     content: fs.readFileSync(require('resolve').sync('baboon-image/baboon.png'))
   },
@@ -28,16 +28,16 @@ var fixtures = {
 test('create bundle', function (assert) {
   var bundle = Bundler()
 
-  bundle.add(fixtures['text_file/test.txt'].source)
+  bundle.add(fixtures['export/text_file/test.txt'].source)
 
-  bundle.add(fixtures['image/baboon.png'].source, fixtures['image/baboon.png'].content)
+  bundle.add(fixtures['export/image/baboon.png'].source, fixtures['export/image/baboon.png'].content)
 
-  bundle.add(fixtures['css_file/style.css'].source, fixtures['css_file/style.css'].content)
+  bundle.add(fixtures['export/css_file/style.css'].source, fixtures['export/css_file/style.css'].content)
 
   extract.on('entry', function (header, stream, next) {
     if (header.name in fixtures) {
       stream.pipe(concat(function (buf) {
-        if (header.name === 'css_file/style.css') assert.deepEqual(buf.toString(), fixtures[header.name].content)
+        if (header.name === 'export/css_file/style.css') assert.deepEqual(buf.toString(), fixtures[header.name].content)
         else assert.deepEqual(buf, fixtures[header.name].content)
         next()
       }))

@@ -3,7 +3,7 @@
   <action>
     <action_id>create_Text_File_1</action_id>
     <action_type>create_file_asset</action_type>
-    <file_path>text_file/test.txt</file_path>
+    <file_path>export/text_file/test.txt</file_path>
     <type_code>text_file</type_code>
     <parentid>1</parentid>
     <value/>
@@ -20,7 +20,7 @@
   <action>
     <action_id>create_Image_2</action_id>
     <action_type>create_file_asset</action_type>
-    <file_path>image/baboon.png</file_path>
+    <file_path>export/image/baboon.png</file_path>
     <type_code>image</type_code>
     <parentid>1</parentid>
     <value/>
@@ -37,7 +37,7 @@
   <action>
     <action_id>create_CSS_File_3</action_id>
     <action_type>create_file_asset</action_type>
-    <file_path>css_file/style.css</file_path>
+    <file_path>export/css_file/style.css</file_path>
     <type_code>css_file</type_code>
     <parentid>1</parentid>
     <value/>
