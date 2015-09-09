@@ -3,7 +3,7 @@
 Generate file bundles for import into Squiz Matrix systems. Useful as an alternative
 to the cubmersome "[Bulk File Import Tool]".
 
-Generated bundles are compatible with but not exclusive to the "[Import Assets from XML Tool]" 
+Generated bundles are compatible with but not exclusive to the "[Import Assets from XML Tool]".
 
 [![Build Status](https://travis-ci.org/joshgillies/node-matrix-bundler.svg)](https://travis-ci.org/joshgillies/node-matrix-bundler)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
